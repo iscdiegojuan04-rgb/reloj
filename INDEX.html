@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HORA ACTUAL</title>
+  <style>
+    /* Estilos básicos */
+    html, body {
+      height: 100%;
+      margin: 0;
+      display: grid;
+      place-items: TOP;
+      background: #f7f7f7;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .clock-container {
+      text-align: TOP;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      background: white;
+    }
+
+    /* Título que se actualizará en tiempo real */
+    h1 {
+      margin: 0 0 3px 0;
+      font-size: 14pt; /* tamaño del título */
+      letter-spacing: 1px;
+    }
+
+    /* Hora en Arial 12 (usamos 12pt para acercarnos a "Arial 12") */
+    .time {
+	  //color:red;
+	  letter-spacing: 1px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12pt; /* especificado por ti */
+       font-weight: 600;
+    }
+
+#time {
+  margin-top: 20px;   /* espacio hacia abajo desde el título */
+  margin-left: 30px;  /* espacio hacia la derecha */
+  font-size: 12pt;    /* tu tamaño Arial 12 */
+  font-family: Arial, Helvetica, sans-serif;
+}
+    .tz-note {
+      margin-top: 3px;
+      font-size: 10pt;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="clock-container" role="region" aria-live="polite" aria-label="Hora actual en UTC menos 5 horas">
+    <h1 id="title"> HORA ACTUAL</h1>
+	<p class="time" id="time"> "........"--:--:--</p>
+<!--
+   <div class="tz-note">Zona horaria mostrada: UTC−5 (offset fijo)</div>
+   -->
+  </div>
+
+  <script>
+    // Offset fijo en horas (UTC -5)
+    const offsetHours = -5;
+
+    // Formatea números a dos dígitos
+    function pad(n){ return n.toString().padStart(2,'0'); }
+
+    // Calcula la fecha/hora ajustada a UTC + offsetHours
+    function getDateWithOffset(offset) {
+      const now = new Date();
+      // Convertir a ms desde Epoch en UTC eliminando offset local
+      const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+      // Aplicar offset en ms
+      return new Date(utc + (offset * 3600000));
+    }
+
+    // Actualiza la UI
+    function updateClock() {
+      const d = getDateWithOffset(offsetHours);
+      const h = pad(d.getHours());
+      const m = pad(d.getMinutes());
+      const s = pad(d.getSeconds());
+
+      const timeStr = `${h}:${m}:${s}`;
+      // Actualiza el elemento de la hora
+      document.getElementById('time').textContent = timeStr;
+      // Actualiza el título visible (según pediste que "HORA ACTUAL" cambie en tiempo real)
+      document.getElementById('title').textContent = `HORA ACTUAL`;
+      // También actualiza el título del documento (pestaña)
+      document.title = `HORA ACTUAL — ${timeStr} (UTC${offsetHours>=0? '+'+offsetHours : offsetHours})`;
+    }
+
+    // Primera actualización inmediata y luego cada segundo
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
